@@ -27,7 +27,7 @@ export function TableAppointment() {
           dataAppointment.map((appointment: IAppointment) => (
             <TableRow key={appointment.id}>
               <TableCell className="font-medium">{appointment.id}</TableCell>
-              <TableCell>{appointment.examType}</TableCell>
+              <TableCell>{appointment.exam.name}</TableCell>
               <TableCell className="text-right">
                 <AppointmentDetailModal appointment={appointment} />
               </TableCell>

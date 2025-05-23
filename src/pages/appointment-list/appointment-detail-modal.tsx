@@ -36,7 +36,7 @@ export function AppointmentDetailModal({
               {appointment.id}
             </p>
           </DialogTitle>
-          <DialogDescription>{appointment.examType}</DialogDescription>
+          <DialogDescription>{appointment.exam.name}</DialogDescription>
         </DialogHeader>
         <div className="flex flex-col space-y-2">
           <p className="text-lg font-semibold text-sky-950">

@@ -1,5 +1,6 @@
 "use client";
 
+import { api } from "@/lib/axios";
 import type { IAppointment } from "@/types/appointment";
 
 import {
@@ -8,6 +9,7 @@ import {
   type SetStateAction,
   createContext,
   useContext,
+  useEffect,
   useState,
 } from "react";
 
@@ -20,31 +22,31 @@ interface Props {
 const AppointmentListContext = createContext({} as Props);
 
 export const AppointmentListProvider = ({ children }: PropsWithChildren) => {
-  const [dataAppointment, setDataAppointment] = useState<IAppointment[]>([
-    {
-      id: "1",
-      date: "2023-10-01",
-      time: "10:00",
-      examType: "Exame de Sangue",
-      additionalInfo: "Informações adicionais",
-    },
-    {
-      id: "2",
-      date: "2023-10-02",
-      time: "11:00",
-      examType: "Exame de Sangue 2",
-      additionalInfo: "Informações adicionais",
-    },
-    {
-      id: "3",
-      date: "2023-10-03",
-      time: "12:00",
-      examType: "Exame de Sangue 3",
-      additionalInfo: "Informações adicionais",
-    },
-  ]);
+  const [dataAppointment, setDataAppointment] = useState<IAppointment[]>([]);
+
+  useEffect(() => {
+    const fetchExams = async () => {
+      try {
+        const { data } = await api.get<IAppointment[]>("/appointments");
+        setDataAppointment(data);
+      } catch (error) {
+        console.error("Erro ao buscar exames:", error);
+      }
+    };
+
+    fetchExams();
+  }, []);
 
   const deleteAppointment = (id: string) => {
+    const updatedAppointments = dataAppointment.filter(
+      (appointment) => appointment.id !== id
+    );
+    setDataAppointment(updatedAppointments);
+
+    api.delete(`/appointments/${id}`).catch((error) => {
+      console.error("Erro ao deletar agendamento:", error);
+    });
+
     return id;
   };
 

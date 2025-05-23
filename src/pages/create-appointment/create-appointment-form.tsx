@@ -3,22 +3,30 @@ import { Button } from "../../components/button";
 import { Input } from "../../components/input";
 import { useForm } from "../../hooks/useForm";
 import { SelectDates } from "./select-dates";
+import { useNavigate } from "react-router-dom";
 
 export function CreateAppointmentForm() {
-  const { availableDate, dataExamsSelect } = useExamsListProvider();
-
+  const { availableDate, dataExamsSelect, postAppointment } =
+    useExamsListProvider();
+  const navigate = useNavigate();
   const additionalInformation = useForm("");
 
   const CreateAppointment = (event: React.FormEvent) => {
     event.preventDefault();
 
     if (additionalInformation.validate() && dataExamsSelect && availableDate) {
-      const appointmentData = {
-        examType: dataExamsSelect?.name,
-        availableDates: availableDate,
-        additionalInformation: additionalInformation.value,
-      };
-      console.log(appointmentData);
+      const isoPart = availableDate.split(" às ")[0];
+      const dateObj = new Date(isoPart);
+      const hora = dateObj.toTimeString().slice(0, 5);
+
+      postAppointment({
+        examId: dataExamsSelect?.id,
+        date: isoPart,
+        time: hora,
+        additionalInfo: additionalInformation.value,
+      });
+
+      navigate("/appointment-list");
     }
   };
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { api } from "@/lib/axios";
+import type { ICreateAppointment } from "@/types/appointment";
 import type { IAvailableDate } from "@/types/availableDate";
 import type { IExam } from "@/types/exam";
 import {
@@ -23,6 +24,7 @@ interface ExamsListContextProps {
   dataAvailableDate: string[];
   setDataAvailableDate: Dispatch<SetStateAction<string[]>>;
   resetState: () => void;
+  postAppointment: (appointment: ICreateAppointment) => Promise<void>;
 }
 
 const ExamsListContext = createContext<ExamsListContextProps | undefined>(
@@ -70,6 +72,15 @@ export const ExamsListProvider = ({ children }: PropsWithChildren) => {
     fetchAvailableDates();
   }, [dataExamsSelect]);
 
+  const postAppointment = async (appointment: ICreateAppointment) => {
+    try {
+      await api.post("/appointments", appointment);
+      console.log("Agendamento criado com sucesso");
+    } catch (error) {
+      console.error("Erro ao criar agendamento:", error);
+    }
+  };
+
   const resetState = () => {
     setDataExamsSelect(null);
     setAvailableDate(null);
@@ -87,6 +98,7 @@ export const ExamsListProvider = ({ children }: PropsWithChildren) => {
         dataAvailableDate,
         setDataAvailableDate,
         resetState,
+        postAppointment,
       }}
     >
       {children}
